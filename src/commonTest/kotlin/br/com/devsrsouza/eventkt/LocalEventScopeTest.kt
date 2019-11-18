@@ -1,9 +1,8 @@
 package br.com.devsrsouza.eventkt
 
 import br.com.devsrsouza.eventkt.scopes.LocalEventScope
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.Dispatchers
 import kotlin.test.Test
 
 class LocalEventScopeTest {
@@ -12,14 +11,14 @@ class LocalEventScopeTest {
     fun `should listen to publish of a String`() {
         val localEventScope = LocalEventScope()
 
-        val onReceiveMock = mockk<(String) -> Unit>()
-        every { onReceiveMock.invoke(any<String>()) } returns Unit
+        val onReceiveMock = mockk<suspend (String) -> Unit>()
+        coEvery { onReceiveMock.invoke(any<String>()) } returns Unit
 
-        localEventScope.listen<String>(this, onReceiveMock)
+        localEventScope.listen<String>(this, Dispatchers.Default, onReceiveMock)
 
         localEventScope.publish("test string")
 
-        verify { onReceiveMock.invoke(any<String>()) }
+        coVerify { onReceiveMock.invoke(any()) }
     }
 
     @Test
@@ -28,13 +27,13 @@ class LocalEventScopeTest {
 
         val localEventScope = LocalEventScope()
 
-        val onReceiveMock = mockk<(TestDataClass) -> Unit>()
-        every { onReceiveMock.invoke(any<TestDataClass>()) } returns Unit
+        val onReceiveMock = mockk<suspend (TestDataClass) -> Unit>()
+        coEvery { onReceiveMock.invoke(any<TestDataClass>()) } returns Unit
 
-        localEventScope.listen<TestDataClass>(this, onReceiveMock)
+        localEventScope.listen<TestDataClass>(this, Dispatchers.Default, onReceiveMock)
 
         localEventScope.publish(TestDataClass("test x", 5))
 
-        verify { onReceiveMock.invoke(any<TestDataClass>()) }
+        coVerify { onReceiveMock.invoke(any<TestDataClass>()) }
     }
 }

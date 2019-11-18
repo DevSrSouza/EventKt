@@ -1,11 +1,14 @@
 package br.com.devsrsouza.eventkt.scopes
 
 import br.com.devsrsouza.eventkt.EventScope
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.KClass
 
-class MultipleEventScope(
+class CombinedEventScope(
     private val scopes: MutableList<EventScope> = mutableListOf()
 ) : EventScope {
+    override val coroutineContext: CoroutineContext = EmptyCoroutineContext
 
     fun addScope(eventScope: EventScope) {
         scopes.add(eventScope)
@@ -21,9 +24,14 @@ class MultipleEventScope(
         }
     }
 
-    override fun <T : Any> listen(kClass: KClass<T>, owner: Any, onReceive: (T) -> Unit) {
+    override fun <T : Any> listen(
+        kClass: KClass<T>,
+        owner: Any,
+        context: CoroutineContext,
+        onReceive: suspend (T) -> Unit
+    ) {
         for (scope in scopes) {
-            scope.listen(kClass, owner, onReceive)
+            scope.listen(kClass, owner, context, onReceive)
         }
     }
 
@@ -33,5 +41,5 @@ class MultipleEventScope(
         }
     }
 
-    fun clone() = MultipleEventScope(scopes.toMutableList())
+    fun clone() = CombinedEventScope(scopes.toMutableList())
 }
