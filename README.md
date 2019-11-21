@@ -1,5 +1,5 @@
 # EventKt
-EventKt is a kotlin multiplatform event bus library
+EventKt is a simple and lightweight kotlin multiplatform event bus library
 
 ## Principles
 The EventKt is scoped based, this means that for you publish or listen for some event you need a [EventScope](/src/commonMain/kotlin/br/com/devsrsouza/eventkt/EventScope.kt).
@@ -37,6 +37,27 @@ yourScope.listen<OnSomethingLocallyHappen>(owner = this) { (withValue) ->
 yourScope.publish(OnSomethingHappen("Hello Local World!"))
 ```
 
+### Listen in your coroutine context
+
+```kotlin
+import br.com.devsrsouza.eventkt.scopes.GlobalEventScope
+import br.com.devsrsouza.eventkt.listen
+
+val singleThreadContext = newSingleThreadContext("EventReceiverThread")
+
+data class OnSomethingHappen()
+
+GlobalEventScope.listen<OnSomethingHappen>(owner = this, context = singleThreadContext) { (withValue) ->
+    println("Receive my event in thread: ${Thread.currentThread().name}")
+}
+
+GlobalEventScope.publish(OnSomethingHappen())
+```
+
+In Android you could receive events directly in the Main Thread (UI Thread)
+``GlobalEventScope.listen<OnSomethingHappen>(owner = this, context = Dispatchers.Main)``
+
+
 ### Unregistering listen
 You should always **unregister** your owners on disable/destroy/stop a object that listen, like a Activity/Fragment/Service on Android
 
@@ -58,6 +79,7 @@ GlobalEventScope.withOwner(this) {
 // unregistering
 GlobalEventScope.unregister(this)
 ```
+
 
 ### Combining EventScopes
 
