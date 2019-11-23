@@ -1,4 +1,5 @@
 rootProject.name = 'EventKt'
+include(':core')
 
 
 enableFeaturePreview('GRADLE_METADATA')

@@ -2,8 +2,8 @@
 EventKt is a simple and lightweight kotlin multiplatform event bus library
 
 ## Principles
-The EventKt is scoped based, this means that for you publish or listen for some event you need a [EventScope](/src/commonMain/kotlin/br/com/devsrsouza/eventkt/EventScope.kt).
-The library provides a global scope [`GlobalEventScope`](/src/commonMain/kotlin/br/com/devsrsouza/eventkt/scopes/GlobalEventScope.kt)
+The EventKt is scoped based, this means that for you publish or listen for some event you need a [EventScope](/core/src/commonMain/kotlin/br/com/devsrsouza/eventkt/EventScope.kt).
+The library provides a global scope [`GlobalEventScope`](/core/src/commonMain/kotlin/br/com/devsrsouza/eventkt/scopes/GlobalEventScope.kt)
 
 ## Samples
 
