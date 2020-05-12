@@ -1,6 +1,8 @@
 package br.com.devsrsouza.eventkt.scopes
 
 import br.com.devsrsouza.eventkt.EventScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.merge
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.KClass
@@ -24,21 +26,14 @@ class CombinedEventScope(
         }
     }
 
-    override fun <T : Any> listen(
-        kClass: KClass<T>,
-        owner: Any,
-        context: CoroutineContext,
-        onReceive: suspend (T) -> Unit
-    ) {
+    override fun publishLocal(any: Any) {
         for (scope in scopes) {
-            scope.listen(kClass, owner, context, onReceive)
+            scope.publishLocal(any)
         }
     }
 
-    override fun unregister(owner: Any) {
-        for (scope in scopes) {
-            scope.unregister(owner)
-        }
+    override fun <T : Any> listen(type: KClass<T>): Flow<T> {
+        return merge(*scopes.map { it.listen(type) }.toTypedArray())
     }
 
     fun clone() = CombinedEventScope(scopes.toMutableList())

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
 
 plugins {
-    kotlin("multiplatform") version "1.3.50"
+    kotlin("multiplatform") version "1.3.71"
     id("maven-publish")
 }
 
@@ -47,7 +47,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
-                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.2") // metadata
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core-native:1.3.6") // metadata
             }
         }
         val commonTest by getting {
