@@ -26,12 +26,6 @@ class CombinedEventScope(
         }
     }
 
-    override fun publishLocal(any: Any) {
-        for (scope in scopes) {
-            scope.publishLocal(any)
-        }
-    }
-
     override fun <T : Any> listen(type: KClass<T>): Flow<T> {
         return merge(*scopes.map { it.listen(type) }.toTypedArray())
     }

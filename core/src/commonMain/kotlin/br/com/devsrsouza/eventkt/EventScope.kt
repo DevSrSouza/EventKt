@@ -15,11 +15,6 @@ interface EventScope : CoroutineScope {
     fun publish(any: Any)
 
     /**
-     * Publish the given [any] to the current app instance.
-     */
-    fun publishLocal(any: Any)
-
-    /**
      * Receives a Flow to listen to events from the given [type].
      */
     fun <T : Any> listen(
