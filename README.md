@@ -1,15 +1,32 @@
 # EventKt
-EventKt is a simple and lightweight kotlin multiplatform event bus library
+EventKt is a simple and lightweight kotlin multiplatform event bus library.
 
-- [Principles](Principles)
-- [Get starter]()
-- [Examples](Examples)
+The library uses Kotlin Coroutines Flow for provide you the events.
+Also the library provide support for remote event publishing and listening, you can check more at the [remote section](#Remote).
+
+- [Principles](#Principles)
+- [Get starter](#Getting-Starter)
+- [Examples](#Examples)
+- [Remote](#Remote)
 
 ## Principles
 The EventKt is scoped based, this means that for you publish or listen for some event you need a [EventScope](/core/src/commonMain/kotlin/br/com/devsrsouza/eventkt/EventScope.kt).
-The library provides a global scope [`GlobalEventScope`](/core/src/commonMain/kotlin/br/com/devsrsouza/eventkt/scopes/GlobalEventScope.kt)
+The library provides a global scope [`GlobalEventScope`](/core/src/commonMain/kotlin/br/com/devsrsouza/eventkt/scopes/GlobalEventScope.kt).
 
 ## Getting Starter
+
+```groovy
+repositories {
+    maven {
+        url = "http://nexus.devsrsouza.com.br/repository/maven-public/"
+    }
+}
+
+dependencies {
+    implementation("br.com.devsrsouza.eventkt:eventkt-core:0.1.0-SNAPSHOT")
+}
+```
+
 
 ## Examples
 
@@ -115,5 +132,40 @@ simpleEventScope.unregister(this)
 
 ```kotlin
 val combinedScope: EventScope = LocalEventScope() + RedisEventScope()
+```
+
+## Remote
+
+EventKt is design to be used with Remote event publisher, such as Redis Pub/Sub, WebsScket, Kafka, etc.
+
+## Redis
+The Redis implementation is JVM only and use [Jedis client](https://github.com/xetorthio/jedis).
+By default, the implementation use [Kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) enconder for your events,
+this means that you will need make your events `@Serializable`. You can change the default enconder in the `RedisEventScope` constructor.
+
+```kotlin
+dependencies {
+    implementation("br.com.devsrsouza.eventkt:eventkt-remote-redis:0.1.0-SNAPSHOT")
+}
+```
+
+#### Usage
+
+```kotlin
+val subscribe = Jedis("127.0.0.1").apply { connect() }
+val publisher = Jedis("127.0.0.1").apply { connect() }
+
+val redisScope = RedisEventScope(subscribe, publisher)
+```
+
+With this scope you can publish and listen to events from remote instances.
+
+```kotlin
+@Serializable
+data class YourEventClass(val x: String)
+
+redisScope.listen<YourEventClass>()
+    .onEach { println(it) }
+    .launchIn(GlobalScope)
 ```
 

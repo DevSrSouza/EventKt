@@ -14,8 +14,8 @@ subprojects {
 
     afterEvaluate {
         publishing {
-            publications.withType<MavenPublication>().forEach {
-                it.artifactId = "eventkt-${it.artifactId}"
+            publications.withType<MavenPublication>().configureEach {
+                artifactId = "eventkt-${artifactId}"
             }
         }
     }
