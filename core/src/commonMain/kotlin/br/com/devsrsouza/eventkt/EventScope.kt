@@ -7,21 +7,21 @@ import kotlin.reflect.KClass
 
 interface EventScope : CoroutineScope {
     /**
-     * Publish the given [any] depending on the [EventScope] implementation.
-     *
-     * For [LocalEventScope] this function works exactly as [publishLocal].
-     * For a Redis implementation, this function could send a event using Redis Pub/Sub.
+     * Publish a new event [any].
      */
     fun publish(any: Any)
 
     /**
-     * Receives a Flow to listen to events from the given [type].
+     * Receives events as Flow from the given [type].
      */
     fun <T : Any> listen(
         type: KClass<T>
     ): Flow<T>
 }
 
+/**
+ * Receives events as Flow from the given [type].
+ */
 inline fun <reified T : Any> EventScope.listen(): Flow<T> = listen(T::class)
 
 operator fun EventScope.plus(eventScope: EventScope): EventScope {

@@ -1,9 +1,7 @@
 package br.com.devsrsouza.eventkt.remote
 
-import kotlin.reflect.KClass
-
 interface RemoteEncoder<T> {
-    fun encode(any: Any, listenTypes: Map<String, KClass<*>>): T
+    fun encode(any: Any, listenTypes: ListenerTypeSet): T
 
-    fun decode(value: T, listenTypes: Map<String, KClass<*>>): Any
+    fun decode(value: T, listenTypes: ListenerTypeSet): Any
 }

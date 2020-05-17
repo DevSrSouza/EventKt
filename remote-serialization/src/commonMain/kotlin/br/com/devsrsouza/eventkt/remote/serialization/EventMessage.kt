@@ -4,13 +4,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
 @Serializable
-data class JsonEventMessage(
+data class StringEventMessage(
     val type: String,
-    val content: JsonElement
+    val content: String
 )
 
 @Serializable
-data class BytesEventMessage(
+data class BynaryEventMessage(
     val type: String,
     val content: ByteArray
 )
