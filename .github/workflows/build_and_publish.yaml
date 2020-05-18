@@ -1,0 +1,83 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Build EventKt
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Get current time
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.3.0
+        with:
+          java-version: 8
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Adding nexus repo for publish to build.gradle.kts
+        run: |
+          echo '
+          allprojects {
+          publishing.repositories.maven {
+          val repo = if(project.version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"
+          url = uri("${System.getenv("NEXUS_IP")}/repository/maven-$repo")
+          credentials {
+          username = System.getenv("NEXUS_USER")
+          password = System.getenv("NEXUS_PASSWORD")
+          }
+          }
+          }' >> build.gradle.kts
+
+      # Runs a single command using the runners shell
+      - name: Build with Gradle
+        env:
+          NEXUS_IP: ${{ secrets.NEXUS_IP }}
+          NEXUS_USER: ${{ secrets.NEXUS_USER }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+        run: "./gradlew build publish
+
+    # Upload Artifacts to GitHub
+    # Core
+    - uses: actions/upload-artifact@v2
+      name: "Upload EventKt Core"
+        with:
+          name: EventKt Core
+          path: core/build/libs/*.jar
+
+      # Remote Core
+      - uses: actions/upload-artifact@v2
+        name: "Upload EventKt Remote Core"
+        with:
+          name: EventKt Remote Core
+          path: remote-core/build/libs/*.jar
+
+      # Remote Serialization
+      - uses: actions/upload-artifact@v2
+        name: "Upload EventKt Remote Serialization"
+        with:
+          name: EventKt Remote Serialization
+          path: remote-serialization/build/libs/*.jar
+
+      - uses: actions/upload-artifact@v2
+        name: "Upload EventKt Remote Redis"
+        with:
+          name: EventKt Remote Redis
+          path: remote-redis/build/libs/*.jar
