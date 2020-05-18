@@ -56,8 +56,8 @@ jobs:
 
     # Upload Artifacts to GitHub
     # Core
-    - uses: actions/upload-artifact@v2
-      name: "Upload EventKt Core"
+      - uses: actions/upload-artifact@v2
+        name: "Upload EventKt Core"
         with:
           name: EventKt Core
           path: core/build/libs/*.jar
