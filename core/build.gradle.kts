@@ -32,6 +32,7 @@ kotlin {
                 api(kotlin("test"))
                 api(kotlin("test-junit"))
                 api("io.mockk:mockk:1.9.3")
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.6")
             }
         }
         val jsMain by getting {

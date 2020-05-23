@@ -5,7 +5,7 @@ The library uses Kotlin Coroutines Flow for provide you the events.
 Also the library provide support for remote event publishing and listening, you can check more at the [remote section](#Remote).
 
 - [Principles](#Principles)
-- [Get starter](#Getting-Starter)
+- [Getting Started](#Getting-Started)
 - [Examples](#Examples)
 - [Remote](#Remote)
 
@@ -13,7 +13,7 @@ Also the library provide support for remote event publishing and listening, you 
 The EventKt is scoped based, this means that for you publish or listen for some event you need a [EventScope](/core/src/commonMain/kotlin/br/com/devsrsouza/eventkt/EventScope.kt).
 The library provides a global scope [`GlobalEventScope`](/core/src/commonMain/kotlin/br/com/devsrsouza/eventkt/scopes/GlobalEventScope.kt).
 
-## Getting Starter
+## Getting Started
 
 ```groovy
 repositories {
@@ -23,9 +23,13 @@ repositories {
 }
 
 dependencies {
+    // multiplatform
     implementation("br.com.devsrsouza.eventkt:eventkt-core:0.1.0-SNAPSHOT")
 }
 ```
+
+**JVM target**:
+`implementation("br.com.devsrsouza.eventkt:eventkt-core-jvm:0.1.0-SNAPSHOT")`
 
 
 ## Examples
@@ -36,9 +40,10 @@ import br.com.devsrsouza.eventkt.listen
 
 data class OnSomethingHappen(val withValue: String)
 
-GlobalEventScope.listen<OnSomethingHappen>().onEach { (withValue) ->
-    println("Receive my event OnSomethingHappen was triggered with value: $withValue")
-}.launchIn(myCoroutineScope)
+GlobalEventScope.listen<OnSomethingHappen>()
+    .onEach { (withValue) ->
+        println("Receive my event OnSomethingHappen was triggered with value: $withValue")
+    }.launchIn(myCoroutineScope)
 
 GlobalEventScope.publish(OnSomethingHappen("Hello World!"))
 ```
@@ -52,11 +57,11 @@ import br.com.devsrsouza.eventkt.listen
 
 data class OnSomethingHappen(val withValue: String)
 
-GlobalEventScope.asSimple().listen<OnSomethingHappen>(owner = this) { (withValue) ->
+SimpleGlobalEventScope.listen<OnSomethingHappen>(owner = this) { (withValue) ->
     println("Receive my event OnSomethingHappen was triggered with value: $withValue")
 }
 
-GlobalEventScope.publish(OnSomethingHappen("Hello World!"))
+SimpleGlobalEventScope.publish(OnSomethingHappen("Hello World!"))
 ```
 
 ### Creating your own scope
@@ -69,9 +74,10 @@ data class OnSomethingLocallyHappen(val withValue: String)
 
 val yourScope = LocalEventScope()
 
-yourScope.listen<OnSomethingLocallyHappen>().onEach { (withValue) ->
-    println("Receive my event OnSomethingLocallyHappen was triggered with value: $withValue")
-}.launchIn(myCoroutineScope)
+yourScope.listen<OnSomethingLocallyHappen>()
+    .onEach { (withValue) ->
+        println("Receive my event OnSomethingLocallyHappen was triggered with value: $withValue")
+    }.launchIn(myCoroutineScope)
 
 yourScope.publish(OnSomethingHappen("Hello Local World!"))
 ```
@@ -97,12 +103,12 @@ simpleEventScope.listen<OnSomethingHappen>(owner = this, coroutineScope = myCoro
 GlobalEventScope.publish(OnSomethingHappen())
 ```
 
-In Android you could receive events directly in the Main Thread (UI Thread)
-``GlobalEventScope.listen<OnSomethingHappen>(owner = this, context = Dispatchers.Main)``
+In Android you could receive events directly in the Main Thread (UI Thread) using simples as well.
+``SimpleGlobalEventScope.listen<OnSomethingHappen>(owner = this, coroutineScope = viewLifecycleOwner.lifecycleScope) {}``
 
 
 ### Unregistering callback listener
-You should always **unregister** your owners on disable/destroy/stop a object that listen, like a Activity/Fragment/Service on Android
+When using simple scope you should always **unregister** your owners on disable/destroy/stop a object that listen, like a Activity/Fragment/Service on Android
 
 ```kotlin
 import br.com.devsrsouza.eventkt.scopes.asSimple
@@ -115,16 +121,14 @@ simpleEventScope.unregisterOwner(owner = this)
 ```kotlin
 import br.com.devsrsouza.eventkt.scopes.asSimple
 
-val simpleEventScope = GlobalEventScope.asSimple()
-
-simpleEventScope.withOwner(this) {
+SimpleGlobalEventScope.withOwner(this) {
     listen<OnSomethingHappen> {
         println("Yeah!")
     }
 }
 
 // unregistering
-simpleEventScope.unregister(this)
+SimpleGlobalEventScope.unregister(this)
 ```
 
 
