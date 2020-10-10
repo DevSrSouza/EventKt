@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(project(":remote-serialization"))
 
     implementation(Libs.jedis)
     implementation(Libs.kotlinX.serialization.runtimeJvm)

@@ -2,18 +2,16 @@ package br.com.devsrsouza.eventkt.redis
 
 import br.com.devsrsouza.eventkt.remote.RemoteEncoder
 import br.com.devsrsouza.eventkt.remote.RemoteEventScope
-import br.com.devsrsouza.eventkt.remote.serialization.StringSerializationRemoteEncoder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPubSub
 
 class RedisEventScope(
+    override val enconder: RemoteEncoder<String>,
     val subscribeJedis: Jedis,
     val publisherJedis: Jedis,
-    val channelName: String = "br.com.devsrsouza.eventkt",
-    override val enconder: RemoteEncoder<String> = StringSerializationRemoteEncoder(Json)
+    val channelName: String = "br.com.devsrsouza.eventkt"
 ) : RemoteEventScope<String>() {
 
     private val pubSub = object : JedisPubSub() {

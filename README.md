@@ -24,12 +24,12 @@ repositories {
 
 dependencies {
     // multiplatform
-    implementation("br.com.devsrsouza.eventkt:eventkt-core:0.1.0-SNAPSHOT")
+    implementation("br.com.devsrsouza.eventkt:eventkt-core:0.2.0-SNAPSHOT")
 }
 ```
 
 **JVM target**:
-`implementation("br.com.devsrsouza.eventkt:eventkt-core-jvm:0.1.0-SNAPSHOT")`
+`implementation("br.com.devsrsouza.eventkt:eventkt-core-jvm:0.2.0-SNAPSHOT")`
 
 
 ## Examples
@@ -142,14 +142,28 @@ val combinedScope: EventScope = LocalEventScope() + RedisEventScope()
 
 EventKt is design to be used with Remote event publisher, such as Redis Pub/Sub, WebsScket, Kafka, etc.
 
-## Redis
-The Redis implementation is JVM only and use [Jedis client](https://github.com/xetorthio/jedis).
-By default, the implementation use [Kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) enconder for your events,
-this means that you will need make your events `@Serializable`. You can change the default enconder in the `RedisEventScope` constructor.
+### Encoders
+
+Remote event listen and publish require to your class/object to enconded and decoded, for this reason, you will need a encoder.
+EventKt provides a [Kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) encoder implementation.
 
 ```kotlin
 dependencies {
-    implementation("br.com.devsrsouza.eventkt:eventkt-remote-redis:0.1.0-SNAPSHOT")
+    implementation("br.com.devsrsouza.eventkt:eventkt-remote-encoder-serialization:0.2.0-SNAPSHOT")
+}
+``` 
+
+### Redis
+The Redis implementation is JVM only and use [Jedis client](https://github.com/xetorthio/jedis).
+The recommendation is to use [Kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) encoder, in case you use it, 
+you will need make your events `@Serializable`.
+
+```kotlin
+dependencies {
+    implementation("br.com.devsrsouza.eventkt:eventkt-remote-jvm-jedis:0.2.0-SNAPSHOT")
+
+    // encoder
+    implementation("br.com.devsrsouza.eventkt:eventkt-remote-encoder-serialization:0.2.0-SNAPSHOT")
 }
 ```
 
@@ -159,7 +173,12 @@ dependencies {
 val subscribe = Jedis("127.0.0.1").apply { connect() }
 val publisher = Jedis("127.0.0.1").apply { connect() }
 
-val redisScope = RedisEventScope(subscribe, publisher)
+val redisScope = RedisEventScope(
+    StringSerializationRemoteEncoder(Json),
+    subscribe,
+    publisher,
+    channelName = "MyProjectChannelName"
+)
 ```
 
 With this scope you can publish and listen to events from remote instances.

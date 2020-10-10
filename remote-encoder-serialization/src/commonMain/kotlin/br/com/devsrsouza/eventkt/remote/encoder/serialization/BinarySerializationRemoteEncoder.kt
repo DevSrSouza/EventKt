@@ -1,4 +1,4 @@
-package br.com.devsrsouza.eventkt.remote.serialization
+package br.com.devsrsouza.eventkt.remote.encoder.serialization
 
 import br.com.devsrsouza.eventkt.remote.ListenerTypeSet
 import br.com.devsrsouza.eventkt.remote.RemoteEncoder
