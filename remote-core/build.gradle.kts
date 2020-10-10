@@ -1,12 +1,15 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
-    kotlin("multiplatform") version "1.3.71"
+    kotlin("multiplatform") version Libs.kotlinVersion
 }
 
 kotlin {
     jvm()
-    js()
+    js {
+        browser()
+        nodejs()
+    }
 
     // TODO: Native
 

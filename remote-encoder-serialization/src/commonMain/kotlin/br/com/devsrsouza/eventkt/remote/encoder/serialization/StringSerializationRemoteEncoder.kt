@@ -8,7 +8,7 @@ class StringSerializationRemoteEncoder(
     val stringFormat: StringFormat
 ) : RemoteEncoder<String> {
 
-    @OptIn(ImplicitReflectionSerializer::class)
+    @OptIn(InternalSerializationApi::class)
     override fun encode(
         any: Any,
         listenTypes: ListenerTypeSet
@@ -19,22 +19,22 @@ class StringSerializationRemoteEncoder(
 
         val message = StringEventMessage(
             serializer.descriptor.serialName,
-            stringFormat.stringify(serializer, any)
+            stringFormat.encodeToString(serializer, any)
         )
 
-        return stringFormat.stringify(StringEventMessage.serializer(), message)
+        return stringFormat.encodeToString(StringEventMessage.serializer(), message)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
+    @OptIn(InternalSerializationApi::class)
     override fun decode(
         value: String,
         listenTypes: ListenerTypeSet
     ): Any {
-        val message = stringFormat.parse(StringEventMessage.serializer(), value)
+        val message = stringFormat.decodeFromString(StringEventMessage.serializer(), value)
 
         val serializer = getSerializer(message.type, listenTypes)
 
-        return stringFormat.parse(serializer, message.content)
+        return stringFormat.decodeFromString(serializer, message.content)
     }
 
 }

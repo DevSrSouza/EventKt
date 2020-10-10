@@ -24,6 +24,16 @@ interface EventScope : CoroutineScope {
  */
 inline fun <reified T : Any> EventScope.listen(): Flow<T> = listen(T::class)
 
+/**
+ * Combining EventScope on one, flowing the plus order:
+ * `first + second`
+ *
+ * Will publish as:
+ * ```
+ * first.publish()
+ * second.publish()
+ * ```
+ */
 operator fun EventScope.plus(eventScope: EventScope): EventScope {
     return when {
         this is CombinedEventScope -> clone().apply {

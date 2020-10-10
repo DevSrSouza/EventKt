@@ -1,11 +1,15 @@
 plugins {
-    kotlin("jvm") version "1.3.71"
-    kotlin("plugin.serialization") version "1.3.71"
+    kotlin("jvm") version Libs.kotlinVersion
+    kotlin("plugin.serialization") version Libs.kotlinVersion
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    api(kotlin("stdlib"))
+    api(project(":remote-core"))
 
-    implementation(Libs.jedis)
-    implementation(Libs.kotlinX.serialization.runtimeJvm)
+    api(Libs.jedis)
+
+    // test
+    testImplementation(project(":remote-encoder-serialization"))
+    testImplementation(Libs.kotlinX.serialization.json)
 }

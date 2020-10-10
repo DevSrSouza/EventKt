@@ -1,9 +1,11 @@
 import br.com.devsrsouza.eventkt.redis.RedisEventScope
 import br.com.devsrsouza.eventkt.listen
+import br.com.devsrsouza.eventkt.remote.encoder.serialization.StringSerializationRemoteEncoder
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.serialization.json.Json
 import redis.clients.jedis.Jedis
 
 
@@ -17,6 +19,7 @@ suspend fun main() {
     println("Connected to redis")
 
     val scope = RedisEventScope(
+        StringSerializationRemoteEncoder(Json),
         subscribe, publisher
     )
 

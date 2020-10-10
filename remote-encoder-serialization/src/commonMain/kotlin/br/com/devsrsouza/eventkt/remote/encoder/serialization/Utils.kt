@@ -1,11 +1,11 @@
 package br.com.devsrsouza.eventkt.remote.encoder.serialization
 
 import br.com.devsrsouza.eventkt.remote.ListenerTypeSet
-import kotlinx.serialization.ImplicitReflectionSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializerOrNull
 
-@OptIn(ImplicitReflectionSerializer::class)
+@OptIn(InternalSerializationApi::class)
 internal fun getSerializer(
     serialName: String,
     listenTypes: ListenerTypeSet

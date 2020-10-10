@@ -1,7 +1,6 @@
 package br.com.devsrsouza.eventkt.remote.encoder.serialization
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class StringEventMessage(

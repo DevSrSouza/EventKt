@@ -3,7 +3,7 @@ package br.com.devsrsouza.eventkt.remote.encoder.serialization
 import br.com.devsrsouza.eventkt.remote.ListenerTypeSet
 import br.com.devsrsouza.eventkt.remote.RemoteEncoder
 import kotlinx.serialization.BinaryFormat
-import kotlinx.serialization.ImplicitReflectionSerializer
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
 
@@ -11,7 +11,7 @@ class BinarySerializationRemoteEncoder(
     val binaryFormat: BinaryFormat
 ) : RemoteEncoder<ByteArray> {
 
-    @OptIn(ImplicitReflectionSerializer::class)
+    @OptIn(InternalSerializationApi::class)
     override fun encode(
         any: Any,
         listenTypes: ListenerTypeSet
@@ -22,22 +22,22 @@ class BinarySerializationRemoteEncoder(
 
         val message = BynaryEventMessage(
             serializer.descriptor.serialName,
-            binaryFormat.dump(serializer, any)
+            binaryFormat.encodeToByteArray(serializer, any)
         )
 
-        return binaryFormat.dump(BynaryEventMessage.serializer(), message)
+        return binaryFormat.encodeToByteArray(BynaryEventMessage.serializer(), message)
     }
 
-    @OptIn(ImplicitReflectionSerializer::class)
+    @OptIn(InternalSerializationApi::class)
     override fun decode(
         value: ByteArray,
         listenTypes: ListenerTypeSet
     ): Any {
-        val message = binaryFormat.load(BynaryEventMessage.serializer(), value)
+        val message = binaryFormat.decodeFromByteArray(BynaryEventMessage.serializer(), value)
 
         val serializer = getSerializer(message.type, listenTypes)
 
-        return binaryFormat.load(serializer, message.content)
+        return binaryFormat.decodeFromByteArray(serializer, message.content)
     }
 
 }
