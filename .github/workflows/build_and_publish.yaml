@@ -71,13 +71,19 @@ jobs:
 
       # Remote Serialization
       - uses: actions/upload-artifact@v2
-        name: "Upload EventKt Remote Serialization"
+        name: "Upload EventKt Remote KTX.Serialization"
         with:
-          name: EventKt Remote Serialization
-          path: remote-serialization/build/libs/*.jar
+          name: EventKt Remote KTX.Serialization
+          path: remote-encoder-serialization/build/libs/*.jar
 
       - uses: actions/upload-artifact@v2
-        name: "Upload EventKt Remote Redis"
+        name: "Upload EventKt Remote JVM Jedis"
         with:
-          name: EventKt Remote Redis
-          path: remote-redis/build/libs/*.jar
+          name: EventKt Remote JVM Jedis
+          path: remote-jvm-jedis/build/libs/*.jar
+
+      - uses: actions/upload-artifact@v2
+          name: "Upload EventKt Remote JVM RabbitMQ"
+          with:
+            name: EventKt Remote JVM RabbitMQ
+            path: remote-jvm-rabbitmq/build/libs/*.jar
