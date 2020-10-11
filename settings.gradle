@@ -1,4 +1,14 @@
 rootProject.name = 'EventKt'
-include(":core", ":remote-core", ":remote-encoder-serialization", ":remote-jvm-jedis")
+include(
+        ":core",
+        ":remote-core",
+
+        // encoders
+        ":remote-encoder-serialization",
+
+        // remote clients
+        ":remote-jvm-jedis",
+        ":remote-jvm-rabbitmq"
+)
 
 enableFeaturePreview('GRADLE_METADATA')

@@ -6,6 +6,7 @@ object Libs {
     val mockK = MockK
 
     const val jedis = "redis.clients:jedis:3.2.0"
+    const val rabbitMq = "com.rabbitmq:amqp-client:5.9.0"
 
     object KotlinX {
         val serialization = Serialization
