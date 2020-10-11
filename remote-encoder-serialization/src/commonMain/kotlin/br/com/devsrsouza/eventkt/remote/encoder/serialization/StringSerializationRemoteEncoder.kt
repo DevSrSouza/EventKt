@@ -7,20 +7,20 @@ import kotlinx.serialization.*
 
 class StringSerializationRemoteEncoder(
     val stringFormat: StringFormat
-) : RemoteEncoder<String> {
+) : SerializationRemoteEncoder<String> {
 
     @OptIn(InternalSerializationApi::class)
     override fun encode(
-        any: Any,
+        event: Any,
         listenTypes: ListenerTypeSet
     ): String {
-        val type = any::class
+        val type = event::class
 
         val serializer = type.serializer() as KSerializer<Any>
 
         val message = StringEventMessage(
             serializer.descriptor.serialName,
-            stringFormat.encodeToString(serializer, any)
+            stringFormat.encodeToString(serializer, event)
         )
 
         return stringFormat.encodeToString(StringEventMessage.serializer(), message)

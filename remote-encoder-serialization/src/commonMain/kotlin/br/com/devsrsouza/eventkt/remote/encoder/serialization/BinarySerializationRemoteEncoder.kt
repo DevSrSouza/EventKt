@@ -10,20 +10,20 @@ import kotlinx.serialization.serializer
 
 class BinarySerializationRemoteEncoder(
     val binaryFormat: BinaryFormat
-) : RemoteEncoder<ByteArray> {
+) : SerializationRemoteEncoder<ByteArray> {
 
     @OptIn(InternalSerializationApi::class)
     override fun encode(
-        any: Any,
+        event: Any,
         listenTypes: ListenerTypeSet
     ): ByteArray {
-        val type = any::class
+        val type = event::class
 
         val serializer = type.serializer() as KSerializer<Any>
 
         val message = BinaryEventMessage(
             serializer.descriptor.serialName,
-            binaryFormat.encodeToByteArray(serializer, any)
+            binaryFormat.encodeToByteArray(serializer, event)
         )
 
         return binaryFormat.encodeToByteArray(BinaryEventMessage.serializer(), message)

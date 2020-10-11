@@ -30,7 +30,7 @@ abstract class RemoteEventScope<T> : BaseEventScope() {
 
         when(result) {
             is RemoteDecodeResult.Success -> {
-                publishLocal(result.value)
+                publishLocal(result.event)
             }
             RemoteDecodeResult.EventTypeNotFound -> {
                 // ignore
