@@ -30,7 +30,8 @@ class JedisEventScope(
         }.start()
     }
 
-    override fun publishToRemote(value: String) {
+    override fun publishToRemote(value: String, eventUniqueId: String) {
+        // TODO: use eventUniqueId
         launch(Dispatchers.IO) {
             publisherJedis.publish(channelName, value)
         }

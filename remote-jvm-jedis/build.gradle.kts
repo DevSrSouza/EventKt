@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version Libs.kotlinVersion
+    kotlin("plugin.serialization") version Libs.kotlinVersion // test
 }
 
 dependencies {

@@ -14,7 +14,7 @@ abstract class RemoteEventScope<T> : BaseEventScope() {
     abstract val enconder: RemoteEncoder<T>
 
     final override fun publish(any: Any) {
-        publishToRemote(enconder.encode(any, listenTypes))
+        publishToRemote(enconder.encode(any, listenTypes), enconder.typeUniqueId(any::class, listenTypes))
     }
 
     override fun <T : Any> listen(type: KClass<T>): Flow<T> {
@@ -23,7 +23,7 @@ abstract class RemoteEventScope<T> : BaseEventScope() {
         return super.listen(type)
     }
 
-    abstract fun publishToRemote(value: T)
+    abstract fun publishToRemote(value: T, eventUniqueId: String)
 
     fun publishFromRemote(value: T) {
         val result = enconder.decode(value, listenTypes)
