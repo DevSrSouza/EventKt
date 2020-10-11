@@ -54,8 +54,8 @@ jobs:
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
         run: "./gradlew build publish"
 
-    # Upload Artifacts to GitHub
-    # Core
+      # Upload Artifacts to GitHub
+      # Core
       - uses: actions/upload-artifact@v2
         name: "Upload EventKt Core"
         with:
@@ -83,7 +83,7 @@ jobs:
           path: remote-jvm-jedis/build/libs/*.jar
 
       - uses: actions/upload-artifact@v2
-          name: "Upload EventKt Remote JVM RabbitMQ"
-          with:
-            name: EventKt Remote JVM RabbitMQ
-            path: remote-jvm-rabbitmq/build/libs/*.jar
+        name: "Upload EventKt Remote JVM RabbitMQ"
+        with:
+          name: EventKt Remote JVM RabbitMQ
+          path: remote-jvm-rabbitmq/build/libs/*.jar
