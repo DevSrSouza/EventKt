@@ -1,4 +1,4 @@
-package br.com.devsrsouza.eventkt.redis
+package br.com.devsrsouza.eventkt.jvm.jedis
 
 import br.com.devsrsouza.eventkt.remote.RemoteEncoder
 import br.com.devsrsouza.eventkt.remote.RemoteEventScope
@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPubSub
 
-class RedisEventScope(
+class JedisEventScope(
     override val enconder: RemoteEncoder<String>,
     val subscribeJedis: Jedis,
     val publisherJedis: Jedis,

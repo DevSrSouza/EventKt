@@ -154,7 +154,7 @@ dependencies {
 ``` 
 
 ### Redis
-The Redis implementation is JVM only and use [Jedis client](https://github.com/xetorthio/jedis).
+The project ships a [Jedis Redis Client](https://github.com/xetorthio/jedis) implementation (jvm only).
 The recommendation is to use [Kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) encoder, in case you use it, 
 you will need make your events `@Serializable`.
 
@@ -173,7 +173,7 @@ dependencies {
 val subscribe = Jedis("127.0.0.1").apply { connect() }
 val publisher = Jedis("127.0.0.1").apply { connect() }
 
-val redisScope = RedisEventScope(
+val redisScope = JedisEventScope(
     StringSerializationRemoteEncoder(Json),
     subscribe,
     publisher,
