@@ -1,6 +1,7 @@
 package br.com.devsrsouza.eventkt.remote.encoder.serialization
 
 import br.com.devsrsouza.eventkt.remote.ListenerTypeSet
+import br.com.devsrsouza.eventkt.remote.RemoteDecodeResult
 import br.com.devsrsouza.eventkt.remote.RemoteEncoder
 import kotlinx.serialization.*
 
@@ -29,12 +30,18 @@ class StringSerializationRemoteEncoder(
     override fun decode(
         value: String,
         listenTypes: ListenerTypeSet
-    ): Any {
+    ): RemoteDecodeResult {
         val message = stringFormat.decodeFromString(StringEventMessage.serializer(), value)
 
-        val serializer = getSerializer(message.type, listenTypes)
+        try {
+            val serializer = getSerializer(message.type, listenTypes)
 
-        return stringFormat.decodeFromString(serializer, message.content)
+            val event = stringFormat.decodeFromString(serializer, message.content)
+
+            return RemoteDecodeResult.Success(event)
+        } catch (e: RemoteTypeNotListenException) {
+            return RemoteDecodeResult.EventTypeNotFound
+        }
     }
 
 }

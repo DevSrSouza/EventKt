@@ -26,7 +26,17 @@ abstract class RemoteEventScope<T> : BaseEventScope() {
     abstract fun publishToRemote(value: T)
 
     fun publishFromRemote(value: T) {
-        publishLocal(enconder.decode(value, listenTypes))
+        val result = enconder.decode(value, listenTypes)
+
+        when(result) {
+            is RemoteDecodeResult.Success -> {
+                publishLocal(result.value)
+            }
+            RemoteDecodeResult.EventTypeNotFound -> {
+                // ignore
+            }
+        }
+
     }
 
     private fun insertListenType(type: KClass<*>) {

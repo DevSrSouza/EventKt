@@ -140,7 +140,7 @@ val combinedScope: EventScope = LocalEventScope() + RedisEventScope()
 
 ## Remote
 
-EventKt is design to be used with Remote event publisher, such as Redis Pub/Sub, WebsScket, Kafka, etc.
+EventKt is design to be used with Remote event publisher, such as Redis Pub/Sub, WebsSocket, Kafka, MQTT, AMQP etc.
 
 ### Encoders
 

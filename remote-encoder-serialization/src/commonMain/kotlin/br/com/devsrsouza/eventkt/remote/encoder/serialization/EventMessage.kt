@@ -9,7 +9,7 @@ data class StringEventMessage(
 )
 
 @Serializable
-data class BynaryEventMessage(
+data class BinaryEventMessage(
     val type: String,
     val content: ByteArray
 )

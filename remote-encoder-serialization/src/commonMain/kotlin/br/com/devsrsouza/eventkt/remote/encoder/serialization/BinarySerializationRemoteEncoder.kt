@@ -1,6 +1,7 @@
 package br.com.devsrsouza.eventkt.remote.encoder.serialization
 
 import br.com.devsrsouza.eventkt.remote.ListenerTypeSet
+import br.com.devsrsouza.eventkt.remote.RemoteDecodeResult
 import br.com.devsrsouza.eventkt.remote.RemoteEncoder
 import kotlinx.serialization.BinaryFormat
 import kotlinx.serialization.InternalSerializationApi
@@ -20,24 +21,30 @@ class BinarySerializationRemoteEncoder(
 
         val serializer = type.serializer() as KSerializer<Any>
 
-        val message = BynaryEventMessage(
+        val message = BinaryEventMessage(
             serializer.descriptor.serialName,
             binaryFormat.encodeToByteArray(serializer, any)
         )
 
-        return binaryFormat.encodeToByteArray(BynaryEventMessage.serializer(), message)
+        return binaryFormat.encodeToByteArray(BinaryEventMessage.serializer(), message)
     }
 
     @OptIn(InternalSerializationApi::class)
     override fun decode(
         value: ByteArray,
         listenTypes: ListenerTypeSet
-    ): Any {
-        val message = binaryFormat.decodeFromByteArray(BynaryEventMessage.serializer(), value)
+    ): RemoteDecodeResult {
+        val message = binaryFormat.decodeFromByteArray(BinaryEventMessage.serializer(), value)
 
-        val serializer = getSerializer(message.type, listenTypes)
+        try {
+            val serializer = getSerializer(message.type, listenTypes)
 
-        return binaryFormat.decodeFromByteArray(serializer, message.content)
+            val event = binaryFormat.decodeFromByteArray(serializer, message.content)
+
+            return RemoteDecodeResult.Success(event)
+        } catch (e: RemoteTypeNotListenException) {
+            return RemoteDecodeResult.EventTypeNotFound
+        }
     }
 
 }
