@@ -6,9 +6,12 @@ include(
         // encoders
         ":remote-encoder-serialization",
 
-        // remote clients
+        // remote clients //
+
+        // remote jvm clients
         ":remote-jvm-jedis",
-        ":remote-jvm-rabbitmq"
+        ":remote-jvm-rabbitmq",
+        ":remote-jvm-paho"
 )
 
 enableFeaturePreview('GRADLE_METADATA')

@@ -7,6 +7,7 @@ object Libs {
 
     const val jedis = "redis.clients:jedis:3.2.0"
     const val rabbitMq = "com.rabbitmq:amqp-client:5.9.0"
+    const val pahoMqtt = "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0"
 
     object KotlinX {
         val serialization = Serialization
