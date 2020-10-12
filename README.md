@@ -153,7 +153,15 @@ dependencies {
 }
 ``` 
 
-### Redis
+### Supported clients
+
+| Client | Package |
+| -------- | ------- |
+| Jedis/Redis (jvm) | `br.com.devsrsouza.eventkt:eventkt-remote-jvm-jedis:0.2.0-SNAPSHOT` |
+| RabbitMQ/AMQP (jvm) | `br.com.devsrsouza.eventkt:eventkt-remote-jvm-rabbitmq:0.2.0-SNAPSHOT` |
+| Eclipse Paho/MQTT (jvm) | `br.com.devsrsouza.eventkt:eventkt-remote-jvm-paho:0.2.0-SNAPSHOT` |
+
+### Redis example
 The project ships a [Jedis Redis Client](https://github.com/xetorthio/jedis) implementation (jvm only).
 The recommendation is to use [Kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) encoder, in case you use it, 
 you will need make your events `@Serializable`.
