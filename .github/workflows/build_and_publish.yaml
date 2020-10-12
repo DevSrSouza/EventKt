@@ -87,3 +87,10 @@ jobs:
         with:
           name: EventKt Remote JVM RabbitMQ
           path: remote-jvm-rabbitmq/build/libs/*.jar
+
+      - uses: actions/upload-artifact@v2
+        name: "Upload EventKt Remote JVM Paho"
+        with:
+          name: EventKt Remote JVM Paho
+          path: remote-jvm-paho/build/libs/*.jar
+
