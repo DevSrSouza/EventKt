@@ -56,7 +56,10 @@ class RabbitMQEventScope(
 
                     insertConsumerTag(eventUniqueId, consumerTag)
                 } else {
-                    channel.basicCancel(consumersTag[eventUniqueId])
+                    consumersTag[eventUniqueId]?.also {
+                        channel.basicCancel(it)
+                        consumersTag.remove(eventUniqueId)
+                    }
                 }
             }
             .launchIn(this)
