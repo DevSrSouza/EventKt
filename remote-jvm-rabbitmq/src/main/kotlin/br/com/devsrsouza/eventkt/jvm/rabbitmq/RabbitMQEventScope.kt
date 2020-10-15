@@ -4,9 +4,7 @@ import br.com.devsrsouza.eventkt.remote.RemoteEncoder
 import br.com.devsrsouza.eventkt.remote.RemoteEventScope
 import com.rabbitmq.client.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -19,6 +17,7 @@ class RabbitMQEventScope(
     val channel: Channel
 ) : RemoteEventScope<ByteArray>() {
     private val consumersTag: MutableMap<EventUniqueId, ConsumerTag> = ConcurrentHashMap()
+    private val subscriptionsSharedFlow: MutableMap<String, SharedFlow<Any>> = ConcurrentHashMap()
 
     override fun publishToRemote(value: ByteArray, eventUniqueId: String) {
         launch(Dispatchers.IO) {
@@ -31,27 +30,46 @@ class RabbitMQEventScope(
     override fun <T : Any> listen(type: KClass<T>): Flow<T> {
         val eventUniqueId = enconder.typeUniqueId(type, listenTypes)
 
-        return super.listen(type)
-            .onStart {
-                if(consumersTag.containsKey(eventUniqueId))
-                    return@onStart
+        val sharedFlow = subscriptionsSharedFlow[eventUniqueId]
 
-                // NoWait ?
-                channel.queueDeclare(eventUniqueId, false, false, false, null)
+        if(sharedFlow != null) return sharedFlow as Flow<T>
 
-                val consumerTag = channel.basicConsume(eventUniqueId, true, object : DefaultConsumer(channel) {
-                    override fun handleDelivery(
-                        consumerTag: String,
-                        envelope: Envelope,
-                        properties: AMQP.BasicProperties?,
-                        body: ByteArray
-                    ) {
-                        publishFromRemote(body)
-                    }
-                })
+        val subscriptionFlow = MutableSharedFlow<T>(extraBufferCapacity = 1)
 
-                insertConsumerTag(eventUniqueId, consumerTag)
+        subscriptionFlow.subscriptionCount
+            .map { count -> count > 0 }
+            .distinctUntilChanged()
+            .onEach { isActive ->
+                if(isActive) {
+                    channel.queueDeclare(eventUniqueId, false, false, false, null)
+
+                    val consumerTag = channel.basicConsume(eventUniqueId, true, object : DefaultConsumer(channel) {
+                        override fun handleDelivery(
+                            consumerTag: String,
+                            envelope: Envelope,
+                            properties: AMQP.BasicProperties?,
+                            body: ByteArray
+                        ) {
+                            publishFromRemote(body)
+                        }
+                    })
+
+                    insertConsumerTag(eventUniqueId, consumerTag)
+                } else {
+                    channel.basicCancel(consumersTag[eventUniqueId])
+                }
             }
+            .launchIn(this)
+
+        super.listen(type)
+            .onEach {
+                subscriptionFlow.tryEmit(it)
+            }
+            .launchIn(this)
+
+        subscriptionsSharedFlow[eventUniqueId] = subscriptionFlow
+
+        return subscriptionFlow
     }
 
     private fun insertConsumerTag(eventUniqueId: EventUniqueId, consumerTag: ConsumerTag) {

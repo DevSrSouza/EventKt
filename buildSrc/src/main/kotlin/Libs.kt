@@ -23,7 +23,7 @@ object Libs {
         }
 
         object Coroutines {
-            private const val version = "1.3.9"
+            private const val version = "1.4.0-M1"
             private const val prefix = "org.jetbrains.kotlinx:kotlinx-coroutines"
 
             val core = "$prefix-core:$version"

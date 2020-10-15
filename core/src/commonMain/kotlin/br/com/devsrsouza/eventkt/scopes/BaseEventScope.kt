@@ -9,21 +9,18 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.KClass
 
 abstract class BaseEventScope : EventScope {
-    protected val publisherChannel = BroadcastChannel<Any>(1)
+    protected val publisherChannel = MutableSharedFlow<Any>(extraBufferCapacity = 1)
 
     override val coroutineContext: CoroutineContext = Dispatchers.Unconfined
 
     override fun <T : Any> listen(
         type: KClass<T>
     ): Flow<T> {
-        return publisherChannel.asFlow()
-            .filter { type.isInstance(it) }
-            .map { it as T }
+        return publisherChannel
+            .filter { type.isInstance(it) } as Flow<T>
     }
 
     protected fun publishLocal(any: Any) {
-        launch {
-            publisherChannel.send(any)
-        }
+        publisherChannel.tryEmit(any)
     }
 }

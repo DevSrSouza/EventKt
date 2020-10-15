@@ -19,6 +19,6 @@ suspend fun main() {
     for (i in 1..100) {
         println("Publishing $i")
         scope.publish(TestClass("DevSrSouza $i", i % 2 == 0))
-        delay(500)
+        delay(1)
     }
 }
